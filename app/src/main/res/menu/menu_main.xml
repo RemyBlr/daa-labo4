@@ -1,4 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- Can't hide title and show only icon -->
+    <item
+        android:id="@+id/sortMenuItem"
+        android:drawable="@drawable/sort"
+        android:title="Sort"
+        app:showAsAction="ifRoom">
+
+        <menu>
+            <item
+                android:id="@+id/sortByCreatedDate"
+                android:title="By created date" />
+            <item
+                android:id="@+id/sortByScheduledDate"
+                android:title="By scheduled date" />
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/generateNoteMenuItem"
+        android:title="Generate note"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/deleteAllNotesMenuItem"
+        android:title="Delete all notes"
+        app:showAsAction="never" />
 
 </menu>
