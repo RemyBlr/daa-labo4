@@ -1,4 +1,50 @@
 package ch.heigvd.iict.daa.template.database.entities
 
-class NoteDao {
+import androidx.lifecycle.LiveData
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.Update
+import ch.heigvd.iict.daa.labo4.models.Note
+import ch.heigvd.iict.daa.labo4.models.NoteAndSchedule
+
+/**
+ * Data Access Object for operations on Note entities
+ */
+@Dao
+interface NoteDao {
+
+    @Insert
+    suspend fun insertNote(note: Note): Long
+
+    @Update
+    suspend fun updateNote(note: Note)
+
+    @Delete
+    suspend fun deleteNote(note: Note)
+
+    @Query("DELETE FROM Note")
+    suspend fun deleteAllNotes()
+
+    @Transaction
+    @Query("SELECT * FROM Note Order BY creationDate DESC")
+    fun getAllNotesSortedCreationDate(): LiveData<List<NoteAndSchedule>>
+
+    @Transaction
+    @Query("""
+        SELECT * FROM Note
+        LEFT JOIN Schedule ON Note.noteId = Schedule.ownerId
+        ORDER BY 
+            CASE 
+                WHEN Schedule.date IS NULL THEN 1 
+                ELSE 0 
+            END,
+            Note.creationDate DESC
+    """)
+    fun getNotesSortedScheduleDate(): LiveData<List<NoteAndSchedule>>
+
+    @Query("SELECT COUNT(*) FROM Note")
+    fun getNotesCount(): LiveData<Int>
 }

@@ -9,6 +9,9 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import ch.heigvd.iict.daa.labo4.R
 
+/**
+ * A fragment containing controls to manage notes, only visible in tablet mode.
+ */
 class ControlsFragment : Fragment() {
 
     private lateinit var noteCounter : TextView
