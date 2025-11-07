@@ -11,7 +11,7 @@
         android:id="@+id/noteCounterLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="%d"
+        android:text="@string/note_counter"
         android:textSize="24sp"
         android:textStyle="bold"
         android:layout_marginBottom="32dp"/>
@@ -20,7 +20,7 @@
         android:id="@+id/generateNotesButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Generate"
+        android:text="@string/generate"
         android:textAllCaps="true"
         android:layout_marginBottom="16dp"/>
 
@@ -28,7 +28,7 @@
         android:id="@+id/deleteAllNotesButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Delete"
+        android:text="@string/delete"
         android:textAllCaps="true"/>
 
 </LinearLayout>
