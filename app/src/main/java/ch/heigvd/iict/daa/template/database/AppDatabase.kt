@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
  * Room database class.
  */
 
-@Database(entities = [Note::class, Schedule::class], version = 1, exportSchema = false)
+@Database(entities = [Note::class, Schedule::class], version = 1, exportSchema = true)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
