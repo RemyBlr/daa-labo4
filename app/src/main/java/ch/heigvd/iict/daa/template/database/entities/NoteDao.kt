@@ -9,6 +9,7 @@ import androidx.room.Transaction
 import androidx.room.Update
 import ch.heigvd.iict.daa.labo4.models.Note
 import ch.heigvd.iict.daa.labo4.models.NoteAndSchedule
+import ch.heigvd.iict.daa.labo4.models.Schedule
 
 /**
  * Data Access Object for operations on Note entities
@@ -16,6 +17,9 @@ import ch.heigvd.iict.daa.labo4.models.NoteAndSchedule
 @Dao
 interface NoteDao {
 
+    //////////////////////////////////
+    ////////////// Notes /////////////
+    //////////////////////////////////
     @Insert
     suspend fun insertNote(note: Note): Long
 
@@ -43,8 +47,18 @@ interface NoteDao {
             END,
             Note.creationDate DESC
     """)
-    fun getNotesSortedScheduleDate(): LiveData<List<NoteAndSchedule>>
+    fun getAllNotesSortedScheduleDate(): LiveData<List<NoteAndSchedule>>
 
     @Query("SELECT COUNT(*) FROM Note")
     fun getNotesCount(): LiveData<Int>
+
+    //////////////////////////////////
+    ////////// Schedules /////////////
+    //////////////////////////////////
+
+    @Insert
+    suspend fun insertSchedule(schedule: Schedule): Long
+
+    @Query("DELETE FROM Schedule")
+    suspend fun deleteAllSchedules()
 }
