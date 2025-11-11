@@ -21,16 +21,16 @@ interface NoteDao {
     ////////////// Notes /////////////
     //////////////////////////////////
     @Insert
-    suspend fun insertNote(note: Note): Long
+    fun insertNote(vararg note: Note): Long
 
     @Update
-    suspend fun updateNote(note: Note)
+    fun updateNote(note: Note)
 
     @Delete
-    suspend fun deleteNote(note: Note)
+    fun deleteNote(note: Note)
 
     @Query("DELETE FROM Note")
-    suspend fun deleteAllNotes()
+    fun deleteAllNotes()
 
     @Transaction
     @Query("SELECT * FROM Note Order BY creationDate DESC")
@@ -57,8 +57,8 @@ interface NoteDao {
     //////////////////////////////////
 
     @Insert
-    suspend fun insertSchedule(schedule: Schedule): Long
+    fun insertSchedule(schedule: Schedule): Long
 
     @Query("DELETE FROM Schedule")
-    suspend fun deleteAllSchedules()
+    fun deleteAllSchedules()
 }

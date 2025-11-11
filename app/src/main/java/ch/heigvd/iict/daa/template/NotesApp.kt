@@ -1,8 +1,6 @@
 package ch.heigvd.iict.daa.labo4
 
 import android.app.Application
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
 import ch.heigvd.iict.daa.template.database.AppDatabase
 import ch.heigvd.iict.daa.template.database.NotesRepository
 
@@ -11,9 +9,7 @@ import ch.heigvd.iict.daa.template.database.NotesRepository
  */
 class NotesApp : Application() {
 
-    private val scope = CoroutineScope(SupervisorJob())
-
-    val database by lazy { AppDatabase.getDatabase(this, scope) }
+    val database by lazy { AppDatabase.getDatabase(this) }
 
     val repository by lazy { NotesRepository(database.noteDao()) }
 

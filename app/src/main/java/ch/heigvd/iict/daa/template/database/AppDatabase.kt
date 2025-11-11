@@ -9,9 +9,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import ch.heigvd.iict.daa.labo4.models.Note
 import ch.heigvd.iict.daa.labo4.models.Schedule
 import ch.heigvd.iict.daa.template.database.entities.NoteDao
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlin.concurrent.thread
 
 
 /**
@@ -28,34 +26,33 @@ abstract class AppDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
-        fun getDatabase(context: Context, scope: CoroutineScope): AppDatabase {
+        fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
                     "notes_database"
                 )
-                    .addCallback(NotesDatabaseCallback(scope))
+                    .addCallback(NotesDatabaseCallback())
                     .build()
                 INSTANCE = instance
                 instance
             }
         }
 
-        private class NotesDatabaseCallback(private val scope: CoroutineScope) :
-            RoomDatabase.Callback() {
+        private class NotesDatabaseCallback : RoomDatabase.Callback() {
 
             override fun onCreate(db: SupportSQLiteDatabase) {
                 super.onCreate(db)
 
                 INSTANCE?.let { database ->
-                    scope.launch(Dispatchers.IO) {
+                     thread {
                         populateDatabase(database.noteDao())
-                    }
+                     }
                 }
             }
 
-            suspend fun populateDatabase(noteDao: NoteDao) {
+            fun populateDatabase(noteDao: NoteDao) {
                 repeat(10) {
                     val note = Note.generateRandomNote()
                     val noteId = noteDao.insertNote(note)
