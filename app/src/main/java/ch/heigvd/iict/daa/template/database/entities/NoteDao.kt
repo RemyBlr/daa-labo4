@@ -21,7 +21,7 @@ interface NoteDao {
     ////////////// Notes /////////////
     //////////////////////////////////
     @Insert
-    fun insertNote(vararg note: Note): Long
+    fun insertNote(note: Note): Long
 
     @Update
     fun updateNote(note: Note)
