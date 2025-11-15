@@ -4,12 +4,17 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import ch.heigvd.iict.daa.template.viewmodels.NotesViewModel
+import ch.heigvd.iict.daa.template.viewmodels.NotesViewModelFactory
 
 class MainActivity : AppCompatActivity() {
-
+    private val notesViewModel: NotesViewModel by viewModels {
+        NotesViewModelFactory((application as NotesApp).repository)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -30,7 +35,6 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.toolbar))
 
         // TODO ...
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -42,18 +46,22 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.sortByCreatedDate -> {
                 // TODO
+                notesViewModel.sortNotesByCreationDate()
                 true
             }
             R.id.sortByScheduledDate -> {
                 // TODO
+                notesViewModel.sortNotesByScheduleDate()
                 true
             }
             R.id.generateNoteMenuItem -> {
                 // TODO
+                notesViewModel.generateANote()
                 true
             }
             R.id.deleteAllNotesMenuItem -> {
                 // TODO
+                notesViewModel.deleteAllNotes()
                 true
             }
             else -> super.onOptionsItemSelected(item)
