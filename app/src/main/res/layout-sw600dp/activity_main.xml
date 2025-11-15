@@ -23,11 +23,26 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <!-- Contenu -->
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fragmentNotes"
-        android:name="ch.heigvd.iict.daa.labo4.fragments.NotesFragment"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragmentNotes"
+            android:name="ch.heigvd.iict.daa.labo4.fragments.NotesFragment"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"/>
+        
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragmentControls"
+            android:name="ch.heigvd.iict.daa.labo4.fragments.ControlsFragment"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
