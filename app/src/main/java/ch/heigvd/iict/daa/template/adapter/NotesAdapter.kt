@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import ch.heigvd.iict.daa.labo4.R
 import ch.heigvd.iict.daa.labo4.models.Note
+import ch.heigvd.iict.daa.labo4.models.NoteAndSchedule
 
 class NotesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 

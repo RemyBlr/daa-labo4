@@ -12,8 +12,8 @@ import ch.heigvd.iict.daa.labo4.R
 import ch.heigvd.iict.daa.template.viewmodels.NotesViewModel
 import ch.heigvd.iict.daa.template.viewmodels.NotesViewModelFactory
 
-import NotesAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
+import ch.heigvd.iict.daa.template.adapter.NotesAdapter
 
 /**
  * A fragment displaying notes in a RecyclerView.
@@ -43,9 +43,10 @@ class NotesFragment : Fragment() {
         recyclerView.adapter = notesAdapter
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        notesViewModel.allNotes.observe(viewLifecycleOwner) { notes ->
-            notes?.let {
-                notesAdapter.updateData(it)
+        notesViewModel.allNotes.observe(viewLifecycleOwner) { scheduledAndNotes ->
+            scheduledAndNotes?.let { notes ->
+                val list = notes.map { scheduledAndNotes -> scheduledAndNotes.note }
+                notesAdapter.updateData(list)
             }
         }
     }
