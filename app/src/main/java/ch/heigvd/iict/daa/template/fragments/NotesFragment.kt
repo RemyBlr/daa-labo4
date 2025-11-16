@@ -12,12 +12,15 @@ import ch.heigvd.iict.daa.labo4.R
 import ch.heigvd.iict.daa.template.viewmodels.NotesViewModel
 import ch.heigvd.iict.daa.template.viewmodels.NotesViewModelFactory
 
+import NotesAdapter
+import androidx.recyclerview.widget.LinearLayoutManager
+
 /**
  * A fragment displaying notes in a RecyclerView.
  */
 class NotesFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
-
+    private lateinit var notesAdapter: NotesAdapter
     private val notesViewModel: NotesViewModel by activityViewModels {
         NotesViewModelFactory((requireActivity().application as NotesApp).repository)
     }
@@ -32,11 +35,18 @@ class NotesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        recyclerView = view.findViewById(R.id.notesRecyclerView)
 
-        // TODO continue
-        notesViewModel.allNotes.observe(viewLifecycleOwner) {
-            // IL FAUDRA LIER L'ADAPTER AU RECYCLERVIEW ICI dans la manip 5
+        recyclerView = view.findViewById(R.id.notesRecyclerView)
+        notesAdapter = NotesAdapter()
+
+        // Dire au RecyclerView d'utiliser cet adapter et de s'afficher en liste verticale
+        recyclerView.adapter = notesAdapter
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        notesViewModel.allNotes.observe(viewLifecycleOwner) { notes ->
+            notes?.let {
+                notesAdapter.updateData(it)
+            }
         }
     }
 }
