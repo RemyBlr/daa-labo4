@@ -49,12 +49,12 @@ class ScheduledNoteViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         return when {
             daysLeft == 0L -> "today"
-            daysLeft == 1L -> "1 day left"
-            daysLeft < 7 -> "$daysLeft days left"
-            daysLeft < 14 -> "1 week left"
-            daysLeft < 30 -> "${daysLeft / 7} weeks left"
-            daysLeft < 60 -> "1 month left"
-            else -> "${daysLeft / 30} months left"
+            daysLeft == 1L -> "1 day"
+            daysLeft < 7 -> "$daysLeft days"
+            daysLeft < 14 -> "1 week"
+            daysLeft < 30 -> "${daysLeft / 7} weeks"
+            daysLeft < 60 -> "1 month"
+            else -> "${daysLeft / 30} months"
         }
     }
 }

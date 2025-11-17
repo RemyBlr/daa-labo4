@@ -8,8 +8,28 @@ class NotesViewModel(private val repository: NotesRepository) : ViewModel() {
     val allNotes = repository.allNotes
     val countNotes = repository.countNotes
 
-    fun generateANote(){
-        repository.insertNote(Note.generateRandomNote())
+//    fun generateANote(){
+//        val note = Note.generateRandomNote()
+//        val noteId = repository.insertNote(note)
+//
+//        val schedule = Note.generateRandomSchedule()
+//        if(schedule != null) {
+//            schedule.ownerId = noteId
+//            repository.insertSchedule(schedule)
+//        }
+//    }
+
+    fun generateANoteWithSchedule() {
+        val note = Note.generateRandomNote()
+
+        // Callback pour créer un schedule après d'avoir créé la note
+        repository.insertNote(note) { noteId ->
+            val schedule = Note.generateRandomSchedule()
+            if (schedule != null) {
+                schedule.ownerId = noteId
+                repository.insertSchedule(schedule)
+            }
+        }
     }
 
     fun deleteAllNotes(){

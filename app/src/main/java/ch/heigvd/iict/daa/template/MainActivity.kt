@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.generateNoteMenuItem -> {
                 // TODO
-                notesViewModel.generateANote()
+                notesViewModel.generateANoteWithSchedule()
                 true
             }
             R.id.deleteAllNotesMenuItem -> {

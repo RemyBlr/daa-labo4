@@ -1,5 +1,6 @@
 package ch.heigvd.iict.daa.template.database
 
+import androidx.annotation.UiThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.switchMap

@@ -49,7 +49,7 @@ class ControlsFragment : Fragment() {
 
         generateNotesBtn.setOnClickListener {
             // TODO
-            notesViewModel.generateANote()
+            notesViewModel.generateANoteWithSchedule()
         }
 
         deleteAllNotesBtn.setOnClickListener {
