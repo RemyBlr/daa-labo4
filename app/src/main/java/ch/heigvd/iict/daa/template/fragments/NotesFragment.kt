@@ -39,15 +39,12 @@ class NotesFragment : Fragment() {
         recyclerView = view.findViewById(R.id.notesRecyclerView)
         notesAdapter = NotesAdapter()
 
-        // Dire au RecyclerView d'utiliser cet adapter et de s'afficher en liste verticale
+        // Dire au RecyclerView d'utiliser cet adapter ('afficher en liste verticale)
         recyclerView.adapter = notesAdapter
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         notesViewModel.allNotes.observe(viewLifecycleOwner) { scheduledAndNotes ->
-            scheduledAndNotes?.let { notes ->
-                val list = notes.map { scheduledAndNotes -> scheduledAndNotes.note }
-                notesAdapter.updateData(list)
-            }
+            notesAdapter.updateData(scheduledAndNotes)
         }
     }
 }

@@ -6,7 +6,6 @@
     android:layout_height="wrap_content"
     android:padding="16dp">
 
-    <!-- 1. Icône au début -->
     <ImageView
         android:id="@+id/item_icon"
         android:layout_width="wrap_content"
@@ -15,7 +14,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        tools:ignore="ContentDescription" />
+        tools:ignore="ContentDescription"/>
 
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"

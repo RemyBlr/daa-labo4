@@ -4,38 +4,42 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import ch.heigvd.iict.daa.labo4.R
-import ch.heigvd.iict.daa.labo4.models.Note
 import ch.heigvd.iict.daa.labo4.models.NoteAndSchedule
 
 class NotesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var notesList = listOf<Note>()
+    private var items = listOf<NoteAndSchedule>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        return if (viewType == 1) {
+
+        return if (viewType == 0) {
             val view = inflater.inflate(R.layout.item_simple, parent, false)
-            SimpleNote(view)
+            SimpleNoteViewHolder(view)
         } else {
             val view = inflater.inflate(R.layout.item_schedule, parent, false)
-            ScheduledNote(view)
+            ScheduledNoteViewHolder(view)
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val note = notesList[position]
+        val item = items[position]
+
         when (holder) {
-            is SimpleNote -> holder.bind(note)
-            is ScheduledNote -> holder.bind(note)
+            is SimpleNoteViewHolder -> holder.bind(item.note)
+            is ScheduledNoteViewHolder -> holder.bind(item)
         }
     }
 
-    override fun getItemCount(): Int {
-        return notesList.size
+    // Note simple ou scheduled
+    override fun getItemViewType(position: Int): Int {
+        return if (items[position].schedule == null) 0 else 1
     }
 
-    fun updateData(newNotes: List<Note>) {
-        this.notesList = newNotes
+    override fun getItemCount() = items.size
+
+    fun updateData(newItems: List<NoteAndSchedule>) {
+        this.items = newItems
         notifyDataSetChanged()
     }
 }
