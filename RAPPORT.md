@@ -1,3 +1,66 @@
+# Lab04 DAA - Rapport
+
+L'application développée est un gestionnaire de notes permettant de créer, afficher et organiser des
+notes avec différentes catégories (todo, shopping, travail, famille) et états (à faire, fait).
+L'architecture suit le pattern MVVM avec une base de données Room et une RecyclerView pour l'affichage.
+
+# Implémentation Détaillée
+
+## Architecture MVVM
+**Choix d'implémentation :**
+- **ViewModel** : `NoteViewModel` pour gérer les données entre Repository et UI
+- **LiveData** pour l'observation des changements de données
+- **Repository** comme couche d'abstraction entre ViewModel et Room
+
+**Justification :**
+MVVM permet une séparation claire des responsabilités et prévient les fuites de mémoire. LiveData assure une mise à jour automatique de l'UI quand les données changent.
+
+## Base de Données Room
+**Entités :**
+```kotlin
+@Entity
+data class Note(
+    @PrimaryKey val id: String,
+    val title: String,
+    val content: String,
+    val type: NoteType,
+    val state: NoteState,
+    val creationDate: Date
+)
+
+@Entity
+data class Schedule(
+    @PrimaryKey val id: String,
+    val noteId: String,
+    val scheduledDate: Date
+)
+
+data class NoteAndSchedule(
+    @Embedded val note: Note,
+    @Relation(
+        parentColumn = "id",
+        entityColumn = "noteId"
+    )
+    val schedule: Schedule?
+)
+```
+
+## Fragments et RecyclerView
+ 
+Il y a deux formats d'affichages :
+    **Smartphone** : `layout/activity_main.xml` avec la liste des notes
+    **Tablette** : `layout-sw600dp/activity_main.xml` avec la liste des notes
+                    et un panel de contrôle
+
+La liste des notes est affiché dans un fragment qui admet un **RecyclerView**. Il gère un affichage
+dynamique des différentes notes et notes avec schedule de la BDD.
+
+# Tests Effectués
+
+| Test | Description | Validation |
+-----------------------------------
+| Rotation de l'écran | | OK |
+
 # Questions complémentaires
 
 >6.1 Quelle est la meilleure approche pour sauver, même après la fermeture de l’app, le choix de
@@ -64,3 +127,8 @@ class NoteAdapter(
     }
 }
 ```
+
+# Conclusion
+
+L'application répond aux exigences du laboratoire avec une architecture MVVM propre, une base de données
+Room fonctionnelle et une interface adaptative *(ViewHolder, RecyclerView, etc)*.
