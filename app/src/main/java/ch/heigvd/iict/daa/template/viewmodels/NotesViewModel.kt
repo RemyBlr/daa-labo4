@@ -6,13 +6,22 @@
  */
 package ch.heigvd.iict.daa.template.viewmodels
 
+import android.app.Application
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import ch.heigvd.iict.daa.template.database.NotesRepository
 import ch.heigvd.iict.daa.labo4.models.Note
 
-class NotesViewModel(private val repository: NotesRepository) : ViewModel() {
+class NotesViewModel(private val repository: NotesRepository, application: Application) : ViewModel() {
     val allNotes = repository.allNotes
     val countNotes = repository.countNotes
+
+    private val settingsManager = SettingsManager(application)
+    init {
+        // On récupère le tri sauvegardé du SharedPreferences
+        val savedSortType = settingsManager.getSortType()
+        repository.setNoteSortingType(savedSortType)
+    }
 
     fun generateANoteWithSchedule() {
         val note = Note.generateRandomNote()
@@ -40,12 +49,12 @@ class NotesViewModel(private val repository: NotesRepository) : ViewModel() {
     }
 }
 
-class NotesViewModelFactory(private val repository: NotesRepository) :
+class NotesViewModelFactory(private val repository: NotesRepository, private val application: Application) :
     androidx.lifecycle.ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(NotesViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST") //enlève le warning de cast
-            return NotesViewModel(repository) as T
+            return NotesViewModel(repository, application) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

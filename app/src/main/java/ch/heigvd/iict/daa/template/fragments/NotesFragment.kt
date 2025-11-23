@@ -28,7 +28,7 @@ class NotesFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var notesAdapter: NotesAdapter
     private val notesViewModel: NotesViewModel by activityViewModels {
-        NotesViewModelFactory((requireActivity().application as NotesApp).repository)
+        NotesViewModelFactory((requireActivity().application as NotesApp).repository, requireActivity().application)
     }
 
     override fun onCreateView(

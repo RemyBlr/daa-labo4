@@ -19,7 +19,7 @@ import ch.heigvd.iict.daa.template.viewmodels.NotesViewModelFactory
 
 class MainActivity : AppCompatActivity() {
     private val notesViewModel: NotesViewModel by viewModels {
-        NotesViewModelFactory((application as NotesApp).repository)
+        NotesViewModelFactory((application as NotesApp).repository, this.application)
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

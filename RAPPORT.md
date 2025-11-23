@@ -1,5 +1,7 @@
 # Lab04 DAA - Rapport
 
+>Auteurs: Bleuer Rémy, Changanaqui Yoann & Rajadurai Thirusan
+
 L'application développée est un gestionnaire de notes permettant de créer, afficher et organiser des
 notes avec différentes catégories (todo, shopping, travail, famille) et états (à faire, fait).
 L'architecture suit le pattern MVVM avec une base de données Room et une RecyclerView pour l'affichage.
@@ -8,12 +10,12 @@ L'architecture suit le pattern MVVM avec une base de données Room et une Recycl
 
 ## Architecture MVVM
 **Choix d'implémentation :**
-- **ViewModel** : `NoteViewModel` pour gérer les données entre Repository et UI
+- **ViewModel** : `NoteViewModel` pour gérer les données durant toute l'activité du programme
 - **LiveData** pour l'observation des changements de données
-- **Repository** comme couche d'abstraction entre ViewModel et Room
+- **Repository** comme couche d'abstraction entre ViewModel et Room *(point d'accès)*
 
 **Justification :**
-MVVM permet une séparation claire des responsabilités et prévient les fuites de mémoire. LiveData 
+MVVM permet une séparation affichage, données et traitements de ces dernières. LiveData 
 assure une mise à jour automatique de l'UI quand les données changent.
 
 ## Base de Données Room
@@ -33,7 +35,7 @@ construire un objet Kotlin combinant une Note et son Schedule optionnel lors d'u
 - Des requêtes SELECT complexes avec LEFT JOIN pour récupérer les objets NoteAndSchedule.
 - Des requêtes de tri spécifiques (ORDER BY) pour organiser les notes par date de création ou par date d'échéance.
 
-**Converters.kt** : Une classe utilitaire indispensable qui indique à Room comment stocker des types de données non primitifs.
+**Converters.kt** : Une classe utilitaire pour formater des types de données complexes *(Calendar)*
 - Elle convertit les objets Date en Long (timestamp) pour les stocker dans la base de données, et vice-versa.
 - Elle convertit également les enum (State, Category) en String pour la persistance.
 
@@ -47,7 +49,7 @@ Il y a deux formats d'affichages :
 La liste des notes est affichée dans un fragment qui admet une **RecyclerView**. L'adapter (`NotesAdapter`) gère un affichage dynamique grâce à deux `ViewHolder` distincts :
 - **`SimpleNoteViewHolder`** : Utilise `item_simple.xml` pour les notes sans échéance.
 - **`ScheduledNoteViewHolder`** : Utilise `item_schedule.xml` pour les notes avec une échéance, et implémente la logique pour calculer et afficher le temps restant ("3 months left", "late", etc.).
-  Cette différenciation est gérée par la méthode `getItemViewType` de l'adapter.
+  Cette différenciation est gérée par la méthode `getItemViewType` de l'adapter *(NotesAdapter)*.
 
 # Tests Effectués
 
@@ -68,22 +70,19 @@ La bonne approche c'est d'utiliser des **SharedPreferences**. C'est une simple r
 qui est tout à fait adapté pour cette simple donnée. Les SharedPreferences sont persisté et restent
 disponibles même après fermeture de l'application.
 
-Room n'est pas nécessaire car la donnée est simple et n'a pas de relation ou une structure complexe *(String)*.
+Room n'est pas nécessaire car la donnée est simple et n'a pas de relation ou une structure complexe.
 
-Exemple dans le ViewModel,
+Exemple de code *(voir implémentation dans `/viewmodels`)*
 ```kotlin
-class NoteViewModel(application: Application) : AndroidViewModel(application) {
-    private val settingsManager = SettingsManager(application)
-    private val currentSortType = MutableLiveData<String>()
+private val prefs: SharedPreferences = context.getSharedPreferences("app_settings", Context.MODE_PRIVATE)
+prefs.edit().putInt(KEY_SORT_TYPE, sortType).apply()
+prefs.getInt(KEY_SORT_TYPE, SORT_BY_CREATION_DATE)
 
-    init {
-        currentSortType.value = settingsManager.getSortType()
-    }
-
-    fun updateSortType(newSort: String) {
-        currentSortType.value = newSort
-        settingsManager.saveSortType(newSort)
-    }
+// Récupéré dans le ViewModel
+private val settingsManager = SettingsManager(application)
+init {
+    val savedSortType = settingsManager.getSortType()
+    repository.setNoteSortingType(savedSortType)
 }
 ```
 
@@ -94,20 +93,27 @@ ce que cette solution présente des limites ? Si oui, quelles sont-elles et quel
 approches mieux adaptées ?
 
 LiveData c'est bien pour afficher une liste qui change en temps réel, mais il y a quand même des limites.
-Déjà, il n'y a pas de gestion d'erreur intégrée - si la liste est vide, on ne sait pas si c'est parce
-qu'il y a vraiment rien dans la base ou si y a eu un problème lors de la récupération. Ensuite, même
-si Room exécute les requêtes en arrière-plan, LiveData reste assez limité pour les opérations asynchrones
-complexes. Si l'on veut combiner plusieurs sources de données ou faire des transformations plus poussées,
-c'est pas l'idéal.
+Déjà, il n'y a pas de gestion d'erreur intégrée. Si la liste est vide, on ne sait pas si c'est parce
+qu'il y a vraiment rien dans la base ou si y a eu un problème lors de la récupération.
 
-Comme solution, les coroutines avec Flow seraient mieux adaptées. Flow permet de gérer les erreurs
+Ensuite, même si Room exécute les requêtes en arrière-plan, LiveData reste assez limité pour les 
+opérations asynchrones complexes. Si l'on veut combiner plusieurs sources de données ou faire des 
+transformations plus poussées, c'est pas l'idéal.
+
+Les coroutines avec Flow seraient mieux adaptées. Flow permet de gérer les erreurs
 proprement et offre plus de flexibilité pour les opérations asynchrones, tout en restant réactif comme LiveData.
 
 >6.3 Les notes affichées dans la RecyclerView ne sont pas sélectionnables ni cliquables. Comment
 procéderiez-vous si vous souhaitiez proposer une interface permettant de sélectionner une
 note pour l’éditer ?
 
-On ajoute un listener dans l'adapter sur l'évenement onClick du ViewHolder,
+Pour rendre les notes cliquables, la meilleure approche consiste à déléguer la gestion du clic du 
+ViewHolder vers le Fragment (ou l'Activity) qui détient le contexte et la logique de navigation.
+
+L'Adapter et le ViewHolder se contentent de **signaler un clic**, sans savoir ce qui se passera ensuite.
+C'est le Fragment qui détient la responsabilité de la navigation et de la logique applicative.
+
+Une idée d'adaptation du code,
 ```kotlin
 class NoteAdapter(
     private val onNoteClick: (Note) -> Unit
@@ -123,9 +129,37 @@ class NoteAdapter(
         }
     }
 }
+
+// Dans SimpleNoteViewHolder.kt
+fun bind(item: NoteAndSchedule) {
+    // ... (mise à jour du titre, texte, etc.)    // On attache le listener à la vue racine de l'item
+    itemView.setOnClickListener {
+        // On exécute la fonction passée à l'adapter avec les données de l'item cliqué
+        onNoteClickListener(item)
+    }
+}
+
+// Dans NotesFragment.kt
+override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+    // On crée l'adapter en lui passant une lambda pour gérer le clic
+    notesAdapter = NotesAdapter { noteAndSchedule ->
+        // Logique à exécuter lors du clic :
+        // 1. Créer un Intent pour la nouvelle activité d'édition
+        val intent = Intent(requireContext(), EditNoteActivity::class.java)
+        // 2. Passer l'ID de la note en extra
+        intent.putExtra("NOTE_ID", noteAndSchedule.note.id)
+        // 3. Démarrer l'activité
+        startActivity(intent)
+    }
+    recyclerView.adapter = notesAdapter
+}
 ```
 
 # Conclusion
 
-L'application répond aux exigences du laboratoire avec une architecture MVVM propre, une base de données
+L'application répond aux exigences du laboratoire avec une architecture MVVM, une base de données
 Room fonctionnelle et une interface adaptative *(ViewHolder, RecyclerView, etc)*.
+
+Cela démontre une application bien structuré *(je l'espère .))* qui mêle la plupart, pour ne pas dire
+tous, les concepts vu en cours.

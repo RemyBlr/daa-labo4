@@ -37,7 +37,7 @@ class ControlsFragment : Fragment() {
     }
 
     private val notesViewModel: NotesViewModel by activityViewModels {
-        NotesViewModelFactory((requireActivity().application as NotesApp).repository)
+        NotesViewModelFactory((requireActivity().application as NotesApp).repository, requireActivity().application)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -47,19 +47,16 @@ class ControlsFragment : Fragment() {
         generateNotesBtn = view.findViewById(R.id.generateNotesButton)
         deleteAllNotesBtn = view.findViewById(R.id.deleteAllNotesButton)
 
-        // TODO continue
         notesViewModel.countNotes.observe(viewLifecycleOwner) { count ->
             noteCounter.text = "$count"
         }
 
 
         generateNotesBtn.setOnClickListener {
-            // TODO
             notesViewModel.generateANoteWithSchedule()
         }
 
         deleteAllNotesBtn.setOnClickListener {
-            // TODO
             notesViewModel.deleteAllNotes()
         }
     }
