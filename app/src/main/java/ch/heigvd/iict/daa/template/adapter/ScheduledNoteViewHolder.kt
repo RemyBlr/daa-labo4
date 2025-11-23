@@ -1,3 +1,9 @@
+/**
+ * DAA - labo4
+ * Autors : Bleuer Rémy, Changanaqui Yoann, Rajadurai Thirusan
+ * Date : 23.11.2025
+ * Description : ViewHolder resprésentant une note avec schedule
+ */
 package ch.heigvd.iict.daa.template.adapter
 
 import android.view.View

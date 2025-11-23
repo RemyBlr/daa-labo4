@@ -1,3 +1,9 @@
+/**
+ * DAA - labo4
+ * Autors : Bleuer Rémy, Changanaqui Yoann, Rajadurai Thirusan
+ * Date : 23.11.2025
+ * Description : ViewHolder resprésentant une note simple
+ */
 package ch.heigvd.iict.daa.template.adapter
 
 import android.view.View
@@ -15,10 +21,6 @@ class SimpleNoteViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     private val icon: ImageView = view.findViewById(R.id.item_icon)
     private val title: TextView = view.findViewById(R.id.item_title)
     private val text: TextView = view.findViewById(R.id.item_text)
-//    private val creationDate: TextView = view.findViewById(R.id.item_creation_date)
-//
-//    private val dateFormatter =
-//        SimpleDateFormat("dd MMM yyyy HH:mm", Locale.getDefault())
 
     fun bind(note: Note) {
         title.text = note.title
@@ -33,8 +35,5 @@ class SimpleNoteViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
 
         icon.setImageResource(iconRes)
-
-        // Ne pas afficher ??? (pas sûr)
-        //creationDate.text = dateFormatter.format(note.creationDate.time)
     }
 }

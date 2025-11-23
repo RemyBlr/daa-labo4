@@ -1,3 +1,9 @@
+/**
+ * DAA - labo4
+ * Autors : Bleuer Rémy, Changanaqui Yoann, Rajadurai Thirusan
+ * Date : 23.11.2025
+ * Description : Adadpter décidant du type de note à afficher
+ */
 package ch.heigvd.iict.daa.template.adapter
 
 import android.view.LayoutInflater

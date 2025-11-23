@@ -1,3 +1,9 @@
+/**
+ * DAA - labo4
+ * Autors : Bleuer Rémy, Changanaqui Yoann, Rajadurai Thirusan
+ * Date : 23.11.2025
+ * Description : Manage complex type into other types
+ */
 package ch.heigvd.iict.daa.template.database
 
 import androidx.room.TypeConverter

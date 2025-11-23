@@ -1,3 +1,9 @@
+/**
+ * DAA - labo4
+ * Autors : Bleuer Rémy, Changanaqui Yoann, Rajadurai Thirusan
+ * Date : 23.11.2025
+ * Description : ViewModel gérant les données temporaires
+ */
 package ch.heigvd.iict.daa.template.viewmodels
 
 import androidx.lifecycle.ViewModel
@@ -7,17 +13,6 @@ import ch.heigvd.iict.daa.labo4.models.Note
 class NotesViewModel(private val repository: NotesRepository) : ViewModel() {
     val allNotes = repository.allNotes
     val countNotes = repository.countNotes
-
-//    fun generateANote(){
-//        val note = Note.generateRandomNote()
-//        val noteId = repository.insertNote(note)
-//
-//        val schedule = Note.generateRandomSchedule()
-//        if(schedule != null) {
-//            schedule.ownerId = noteId
-//            repository.insertSchedule(schedule)
-//        }
-//    }
 
     fun generateANoteWithSchedule() {
         val note = Note.generateRandomNote()
