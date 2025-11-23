@@ -13,37 +13,29 @@ L'architecture suit le pattern MVVM avec une base de données Room et une Recycl
 - **Repository** comme couche d'abstraction entre ViewModel et Room
 
 **Justification :**
-MVVM permet une séparation claire des responsabilités et prévient les fuites de mémoire. LiveData assure une mise à jour automatique de l'UI quand les données changent.
+MVVM permet une séparation claire des responsabilités et prévient les fuites de mémoire. LiveData 
+assure une mise à jour automatique de l'UI quand les données changent.
 
 ## Base de Données Room
-**Entités :**
-```kotlin
-@Entity
-data class Note(
-    @PrimaryKey val id: String,
-    val title: String,
-    val content: String,
-    val type: NoteType,
-    val state: NoteState,
-    val creationDate: Date
-)
 
-@Entity
-data class Schedule(
-    @PrimaryKey val id: String,
-    val noteId: String,
-    val scheduledDate: Date
-)
+**Note** : L'entité principale. Elle contient un id (clé primaire auto-générée), un titre, un texte, une 
+catégorie, un état et une date de création (Long représentant un timestamp).
 
-data class NoteAndSchedule(
-    @Embedded val note: Note,
-    @Relation(
-        parentColumn = "id",
-        entityColumn = "noteId"
-    )
-    val schedule: Schedule?
-)
-```
+**Schedule** : Une entité qui représente une échéance. Elle est liée à une Note via une clé étrangère (ownerId) 
+sur l'ID de la note. Elle contient également sa propre date d'échéance et un état.
+
+**NoteAndSchedule** : Une classe de données relationnelle (@Embedded et @Relation) qui permet à Room de 
+construire un objet Kotlin combinant une Note et son Schedule optionnel lors d'une requête JOIN.
+
+**NoteDao** : Interface qui définit toutes les opérations sur la base de données. Elle inclut :
+- Des requêtes d'insertion (@Insert) pour les notes et les schedules.
+- Des requêtes de suppression (@Query) pour vider les tables.
+- Des requêtes SELECT complexes avec LEFT JOIN pour récupérer les objets NoteAndSchedule.
+- Des requêtes de tri spécifiques (ORDER BY) pour organiser les notes par date de création ou par date d'échéance.
+
+**Converters.kt** : Une classe utilitaire indispensable qui indique à Room comment stocker des types de données non primitifs.
+- Elle convertit les objets Date en Long (timestamp) pour les stocker dans la base de données, et vice-versa.
+- Elle convertit également les enum (State, Category) en String pour la persistance.
 
 ## Fragments et RecyclerView
  
@@ -52,14 +44,19 @@ Il y a deux formats d'affichages :
     **Tablette** : `layout-sw600dp/activity_main.xml` avec la liste des notes
                     et un panel de contrôle
 
-La liste des notes est affiché dans un fragment qui admet un **RecyclerView**. Il gère un affichage
-dynamique des différentes notes et notes avec schedule de la BDD.
+La liste des notes est affichée dans un fragment qui admet une **RecyclerView**. L'adapter (`NotesAdapter`) gère un affichage dynamique grâce à deux `ViewHolder` distincts :
+- **`SimpleNoteViewHolder`** : Utilise `item_simple.xml` pour les notes sans échéance.
+- **`ScheduledNoteViewHolder`** : Utilise `item_schedule.xml` pour les notes avec une échéance, et implémente la logique pour calculer et afficher le temps restant ("3 months left", "late", etc.).
+  Cette différenciation est gérée par la méthode `getItemViewType` de l'adapter.
 
 # Tests Effectués
 
-| Test | Description | Validation |
------------------------------------
-| Rotation de l'écran | | OK |
+| Test                  | Description                                                                          | Validation |
+|-----------------------|--------------------------------------------------------------------------------------|------------|
+| Rotation de l'écran   | L'état de l'application (liste des notes, tri) est conservé lors de la rotation.       | OK         |
+| Génération de Notes   | Les boutons du menu génèrent correctement des notes simples et des notes planifiées.   | OK         |
+| Suppression de Notes  | Le bouton du menu supprime toutes les notes et schedules de la base de données.      | OK         |
+| Tri des Notes         | Les options de menu trient la liste par date de création ou par date d'échéance.       | OK         |
 
 # Questions complémentaires
 
