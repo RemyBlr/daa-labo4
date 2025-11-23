@@ -39,13 +39,8 @@ interface NoteDao {
     @Transaction
     @Query("""
         SELECT * FROM Note
-        LEFT JOIN Schedule ON Note.noteId = Schedule.ownerId
-        ORDER BY 
-            CASE 
-                WHEN Schedule.date IS NULL THEN 1 
-                ELSE 0 
-            END,
-            Note.creationDate DESC
+    LEFT JOIN Schedule ON Note.noteId = Schedule.ownerId
+    ORDER BY Schedule.date DESC
     """)
     fun getAllNotesSortedScheduleDate(): LiveData<List<NoteAndSchedule>>
 

@@ -1,3 +1,9 @@
+/**
+ * DAA - labo4
+ * Autors : Bleuer Rémy, Changanaqui Yoann, Rajadurai Thirusan
+ * Date : 23.11.2025
+ * Description : MainActivity that manage the app behavior
+ */
 package ch.heigvd.iict.daa.labo4
 
 import android.os.Bundle
@@ -13,7 +19,7 @@ import ch.heigvd.iict.daa.template.viewmodels.NotesViewModelFactory
 
 class MainActivity : AppCompatActivity() {
     private val notesViewModel: NotesViewModel by viewModels {
-        NotesViewModelFactory((application as NotesApp).repository)
+        NotesViewModelFactory((application as NotesApp).repository, this.application)
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,7 +62,7 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.generateNoteMenuItem -> {
                 // TODO
-                notesViewModel.generateANote()
+                notesViewModel.generateANoteWithSchedule()
                 true
             }
             R.id.deleteAllNotesMenuItem -> {

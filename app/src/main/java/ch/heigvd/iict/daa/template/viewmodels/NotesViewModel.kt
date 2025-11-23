@@ -1,15 +1,39 @@
+/**
+ * DAA - labo4
+ * Autors : Bleuer Rémy, Changanaqui Yoann, Rajadurai Thirusan
+ * Date : 23.11.2025
+ * Description : ViewModel gérant les données temporaires
+ */
 package ch.heigvd.iict.daa.template.viewmodels
 
+import android.app.Application
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import ch.heigvd.iict.daa.template.database.NotesRepository
 import ch.heigvd.iict.daa.labo4.models.Note
 
-class NotesViewModel(private val repository: NotesRepository) : ViewModel() {
+class NotesViewModel(private val repository: NotesRepository, application: Application) : ViewModel() {
     val allNotes = repository.allNotes
     val countNotes = repository.countNotes
 
-    fun generateANote(){
-        repository.insertNote(Note.generateRandomNote())
+    private val settingsManager = SettingsManager(application)
+    init {
+        // On récupère le tri sauvegardé du SharedPreferences
+        val savedSortType = settingsManager.getSortType()
+        repository.setNoteSortingType(savedSortType)
+    }
+
+    fun generateANoteWithSchedule() {
+        val note = Note.generateRandomNote()
+
+        // Callback pour créer un schedule après d'avoir créé la note
+        repository.insertNote(note) { noteId ->
+            val schedule = Note.generateRandomSchedule()
+            if (schedule != null) {
+                schedule.ownerId = noteId
+                repository.insertSchedule(schedule)
+            }
+        }
     }
 
     fun deleteAllNotes(){
@@ -25,12 +49,12 @@ class NotesViewModel(private val repository: NotesRepository) : ViewModel() {
     }
 }
 
-class NotesViewModelFactory(private val repository: NotesRepository) :
+class NotesViewModelFactory(private val repository: NotesRepository, private val application: Application) :
     androidx.lifecycle.ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(NotesViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST") //enlève le warning de cast
-            return NotesViewModel(repository) as T
+            return NotesViewModel(repository, application) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
